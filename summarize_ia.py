@@ -494,6 +494,8 @@ if st.button(t['generate_code'], type="primary"):
     st.session_state.generated_code = code
     st.session_state.code_format = code_format
 
+# Remplacez la section du bouton de téléchargement (vers la ligne 390) par ce code :
+
 if 'generated_code' in st.session_state:
     code_format_used = st.session_state.get('code_format', t['code_complete'])
 
@@ -540,19 +542,28 @@ if 'generated_code' in st.session_state:
         st.code(html_code, language="html")
         st.markdown('</div>', unsafe_allow_html=True)
 
+        # CORRECTION : Préparer le contenu pour téléchargement (CSS + HTML seulement)
+        download_content = css_code + "\n\n" + html_code
+
     else:
         st.markdown('<div class="code-container">', unsafe_allow_html=True)
         st.code(st.session_state.generated_code, language="html")
         st.markdown('</div>', unsafe_allow_html=True)
 
+        # Pour le code complet, on télécharge tel quel
+        download_content = st.session_state.generated_code
+
     # Different filename based on format
-    filename = "bouton_resume_ia_optimise.html" if code_format_used == t['code_optimized'] else "bouton_resume_ia.html"
+    if code_format_used == t['code_optimized']:
+        filename = "bouton_resume_ia_optimise.txt"
+    else:
+        filename = "bouton_resume_ia.txt"
 
     st.download_button(
         label=t['download_code'],
-        data=st.session_state.generated_code,
+        data=download_content,  # CORRECTION : Utiliser download_content au lieu de st.session_state.generated_code
         file_name=filename,
-        mime="text/html"
+        mime="text/plain"  # CORRECTION : Changer en text/plain pour un fichier texte
     )
 else:
     st.info(t['click_generate'])
